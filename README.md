@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Shopify Next.js External App
 
-## Getting Started
+A secure and modern Next.js application for integrating with Shopify stores using OAuth authentication. This app provides a robust foundation for building Shopify applications with features like secure session management, access token handling, and protected routes.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Secure OAuth Authentication**: Implements Shopify's OAuth flow with HMAC validation and CSRF protection
+- **Session Management**: JWT-based session handling with automatic expiration
+- **Secure Token Storage**: Encrypted access token storage using Supabase
+- **Middleware Protection**: Route protection with automatic session validation
+- **Modern Tech Stack**: Built with Next.js 15, TypeScript, and Tailwind CSS
+
+## Prerequisites
+
+- Node.js (Latest LTS version recommended)
+- A Shopify Partner account
+- A Supabase account and project
+
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+SHOPIFY_APP_API_KEY=your_shopify_api_key
+SHOPIFY_APP_SECRET=your_shopify_app_secret
+SCOPES=read_products,write_products
+REDIRECT_URI=your_app_redirect_uri
+JWT_SECRET=your_jwt_secret
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup Instructions
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+3. Set up your Supabase project:
+   - Create a new table named 'stores' with columns:
+     - shop_domain (text, primary key)
+     - access_token (text)
+     - installed_at (timestamp)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Configure your Shopify app:
+   - Go to your Shopify Partner dashboard
+   - Create a new app
+   - Set the App URL and Allowed redirection URL(s)
+   - Copy the API key and secret to your environment variables
 
-## Learn More
+5. Start the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+## Authentication Flow
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Store owner visits your app's URL
+2. App validates the request using HMAC
+3. Redirects to Shopify OAuth consent screen
+4. After approval, Shopify redirects back with an authorization code
+5. App exchanges code for access token
+6. Access token is encrypted and stored in Supabase
+7. Session token (JWT) is created and stored in cookies
+8. User is redirected to the dashboard
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Security Features
 
-## Deploy on Vercel
+- HMAC validation for all Shopify requests
+- CSRF protection using nonce
+- Encrypted access token storage
+- HTTP-only cookies for session management
+- Automatic session expiration
+- Protected routes using middleware
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Development
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The app uses Next.js with TypeScript and includes:
+
+- ESLint for code linting
+- Tailwind CSS for styling
+- Shadcn UI components
+- Jose for JWT handling
+
+## Deployment
+
+The app is optimized for deployment on Vercel:
+
+1. Push your code to a Git repository
+2. Connect your repository to Vercel
+3. Add your environment variables in Vercel
+4. Deploy
+
+## Best Practices
+
+- Always use HTTPS in production
+- Regularly rotate JWT secrets
+- Monitor session expiration
+- Implement rate limiting for API routes
+- Keep dependencies updated
+
+## Troubleshooting
+
+- If authentication fails, check your API key and secret
+- Verify your redirect URI matches exactly
+- Ensure all required scopes are configured
+- Check Supabase connection and table structure
+
+## License
+
+MIT
